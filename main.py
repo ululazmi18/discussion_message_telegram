@@ -18,6 +18,7 @@ async def countdown(t):
         await asyncio.sleep(1)
 
 async def send_message(NamaAkun, details, index):
+    import sys
     from pyrogram import Client, errors
     
     config = baca("config.json")
@@ -33,7 +34,7 @@ async def send_message(NamaAkun, details, index):
         api_id = config['pengaturan'][0]['api_id']
         api_hash = config['pengaturan'][0]['api_hash']
     else:
-        exit("isi api_id dan api_hash di config.json")
+        sys.exit("isi api_id dan api_hash di config.json")
     if config['akun'][NamaAkun][0]['JumlahPost']:
         JumlahPost = config['akun'][NamaAkun][0]['JumlahPost']
     else:
