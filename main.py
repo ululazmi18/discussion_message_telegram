@@ -34,7 +34,7 @@ async def send_message(NamaAkun, details, index):
         api_id = config['pengaturan'][0]['api_id']
         api_hash = config['pengaturan'][0]['api_hash']
     else:
-        sys.exit("isi api_id dan api_hash di config.json")
+        sys.exit(1)
     if config['akun'][NamaAkun][0]['JumlahPost']:
         JumlahPost = config['akun'][NamaAkun][0]['JumlahPost']
     else:
