@@ -55,6 +55,20 @@ async def send_message(NamaAkun, details, index):
     JalurFileGambar = os.path.join(FolderMedia, FileGambar)
     JalurFileVideo = os.path.join(FolderMedia, FileVideo)
     
+    if FileText != "":
+        if not os.path.exists(JalurFileText):
+            print(f"[Akun {index}: {NamaAkun}] - File {FileText} tidak ditemukan")
+            return
+    if FileGambar != "":
+        if not os.path.exists(JalurFileGambar):
+            print(f"[Akun {index}: {NamaAkun}] - File {FileGambar} tidak ditemukan")
+            return
+    if FileVideo != "":
+        if not os.path.exists(JalurFileVideo):
+            print(f"[Akun {index}: {NamaAkun}] - File {FileVideo} tidak ditemukan")
+            return
+    
+    
     with open(JalurFileChannels, 'r') as file:
         target_channels = [line.strip().replace('https://t.me/', '') for line in file if line.strip()]
             
@@ -129,9 +143,8 @@ async def send_message(NamaAkun, details, index):
         print(f"Kesalahan pada akun {NamaAkun}: {e}")
 
 async def main():
-    from core import bantuan
     
-    config = bantuan.baca("config.json")
+    config = baca("config.json")
     
     akun = config.get("akun", {})
     
