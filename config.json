@@ -1,0 +1,47 @@
+{
+    "pengaturan": [
+        {
+            "api_id": 21672978,
+            "api_hash": "f8ec87ad13cb4a7b34bded7250448ff2",
+            "JumlahPost": 2
+        }
+    ],
+    "akun": {
+        "Fatimah": [
+            {
+                "Nomor": "628561024699",
+                "FileChannel": "1.txt",
+                "FileText": "1 2.txt",
+                "FileGambar": "A B.png",
+                "FileVideo": "",
+                "JumlahPost": null,
+                "api_id": "",
+                "api_hash": ""
+            }
+        ],
+        "Serabi": [
+            {
+                "Nomor": "628561630676",
+                "FileChannel": "",
+                "FileText": "",
+                "FileGambar": "",
+                "FileVideo": "",
+                "JumlahPost": null,
+                "api_id": "",
+                "api_hash": ""
+            }
+        ],
+        "Dewi": [
+            {
+                "Nomor": "628567305419",
+                "FileChannel": "1.txt",
+                "FileText": "1 2.txt",
+                "FileGambar": "A B.png",
+                "FileVideo": "",
+                "JumlahPost": null,
+                "api_id": "",
+                "api_hash": ""
+            }
+        ]
+    }
+}
