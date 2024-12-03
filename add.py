@@ -34,7 +34,7 @@ if __name__ == "__main__":
     # Membaca konfigurasi dari file config.json
     config = baca_konfigurasi("config.json")
     
-    if config['pengaturan'][0]['api_id'] and config['pengaturan'][0]['api_hash']
+    if config['pengaturan'][0]['api_id'] and config['pengaturan'][0]['api_hash']:
         api_id = config['pengaturan'][0]['api_id']
         api_hash = config['pengaturan'][0]['api_hash']
     else:
