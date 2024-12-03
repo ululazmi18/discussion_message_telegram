@@ -6,6 +6,11 @@ os.makedirs("media", exist_ok=True)
 os.makedirs("sessions", exist_ok=True)
 os.makedirs("text", exist_ok=True)
 
+files = [f for f in os.listdir("sessions") if f.endswith(".session")]
+if not files:
+    print("\nJalankan python add.py untuk membuat session baru.\n")
+    exit()
+
 def baca(nama_file):
     import json
     with open(nama_file, "r", encoding="utf-8") as file:
