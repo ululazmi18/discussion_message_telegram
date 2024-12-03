@@ -25,6 +25,8 @@ async def buat_sesi(phone_number, api_id, api_hash):
     
     # Bebaskan sumber daya (gc.collect is optional here due to `async with`)
     gc.collect()
+    
+    print("Jalankan kembali python main.py untuk melanjutkan")
 
 if __name__ == "__main__":
     import asyncio
