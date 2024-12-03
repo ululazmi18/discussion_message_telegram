@@ -1,15 +1,39 @@
 import os
 import asyncio
+from pyrogram import Client, errors
 
 os.makedirs("channel", exist_ok=True)
 os.makedirs("media", exist_ok=True)
 os.makedirs("sessions", exist_ok=True)
 os.makedirs("text", exist_ok=True)
 
-files = [f for f in os.listdir("sessions") if f.endswith(".session")]
-if not files:
-    print("\nJalankan python add.py untuk membuat session baru.\n")
-    exit()
+def baca_akun():
+    
+    akun = {}
+    with open("akun.txt", "r", encoding="utf-8") as file:
+        for index, line in enumerate(file, start=1):
+            line = line.strip()
+            if not line or line.startswith("#") or line.count(",") < 2:
+                continue
+            data = line.split(",")
+            
+            # Pastikan setidaknya ada 2 elemen (NamaAkun, NamaFileSession)
+            if len(data) < 4:
+                print(f"Baris {index} tidak valid: {line}")
+                continue
+            
+            # Parsing data dengan panjang variabel
+            akun[data[0]] = {
+                "NamaFileSession": data[1],
+                "FileChannel": data[2] if len(data) > 2 else "",
+                "FileText": data[3] if len(data) > 3 else "",
+                "FileGambar": data[4] if len(data) > 4 else "",
+                "FileVideo": data[5] if len(data) > 5 else "",
+                "JumlahPost": int(data[6]) if len(data) > 6 and data[6] else None,
+                "api_id": int(data[7]) if len(data) > 7 and data[7] else None,
+                "api_hash": data[8] if len(data) > 8 else "",
+            }
+    return akun
 
 def baca(nama_file):
     import json
@@ -23,43 +47,50 @@ async def countdown(t):
         await asyncio.sleep(1)
 
 async def send_message(NamaAkun, details, index):
-    from pyrogram import Client, errors
     
     config = baca("config.json")
-        
-    if not config['akun'][NamaAkun][0]['FileChannel']:
+    
+    akun = baca_akun()
+    
+    if not akun[NamaAkun]['FileChannel']:
         return
-    if not config['akun'][NamaAkun][0]['FileText'] and not config['akun'][NamaAkun][0]['FileGambar'] and not config['akun'][NamaAkun][0]['FileVideo']:
+    if not akun[NamaAkun]['FileText'] and not akun[NamaAkun]['FileGambar'] and not akun[NamaAkun]['FileVideo']:
         return
-    if config['akun'][NamaAkun][0]['api_id'] and config['akun'][NamaAkun][0]['api_hash']:
-        api_id = config['akun'][NamaAkun][0]['api_id']
-        api_hash = config['akun'][NamaAkun][0]['api_hash']
+    if akun[NamaAkun]['api_id'] and akun[NamaAkun]['api_hash']:
+        api_id = akun[NamaAkun]['api_id']
+        api_hash = akun[NamaAkun]['api_hash']
     elif config['pengaturan'][0]['api_id'] and config['pengaturan'][0]['api_hash']:
         api_id = config['pengaturan'][0]['api_id']
         api_hash = config['pengaturan'][0]['api_hash']
     else:
         print(f"[Akun {index}: {NamaAkun}] - isi api_id dan api_hash di config.json")
         return
-    if config['akun'][NamaAkun][0]['JumlahPost']:
-        JumlahPost = config['akun'][NamaAkun][0]['JumlahPost']
+    if akun[NamaAkun]['JumlahPost']:
+        JumlahPost = akun[NamaAkun]['JumlahPost']
     else:
         JumlahPost = config['pengaturan'][0]['JumlahPost']
 
-    FileChannel = config['akun'][NamaAkun][0]['FileChannel']
-    FileText = config['akun'][NamaAkun][0]['FileText']
-    FileGambar = config['akun'][NamaAkun][0]['FileGambar']
-    FileVideo = config['akun'][NamaAkun][0]['FileVideo']
+    FileSession = akun[NamaAkun]['NamaFileSession']
+    FileChannel = akun[NamaAkun]['FileChannel']
+    FileText = akun[NamaAkun]['FileText']
+    FileGambar = akun[NamaAkun]['FileGambar']
+    FileVideo = akun[NamaAkun]['FileVideo']
     
     FolderChannel = os.path.join(os.path.dirname(__file__), 'channel')
     FolderMedia = os.path.join(os.path.dirname(__file__), 'media')
     FolderSessions = os.path.join(os.path.dirname(__file__), 'sessions')
     Foldertext = os.path.join(os.path.dirname(__file__), 'text')
 
+    JalurFileSession = os.path.join(FolderSessions, FileSession)
     JalurFileChannels = os.path.join(FolderChannel, FileChannel)
     JalurFileText = os.path.join(Foldertext, FileText)
     JalurFileGambar = os.path.join(FolderMedia, FileGambar)
     JalurFileVideo = os.path.join(FolderMedia, FileVideo)
     
+    if FileChannel != "":
+        if not os.path.exists(JalurFileChannels):
+            print(f"[Akun {index}: {NamaAkun}] - File {FileChannel} tidak ditemukan")
+            return
     if FileText != "":
         if not os.path.exists(JalurFileText):
             print(f"[Akun {index}: {NamaAkun}] - File {FileText} tidak ditemukan")
@@ -76,9 +107,14 @@ async def send_message(NamaAkun, details, index):
     
     with open(JalurFileChannels, 'r') as file:
         target_channels = [line.strip().replace('https://t.me/', '') for line in file if line.strip()]
-            
+    
+    if not os.path.exists(JalurFileSession):
+        if isinstance(details.get('NamaFileSession'), int) or (isinstance(details.get('NamaFileSession'), str) and details.get('NamaFileSession').isdigit()):
+            pass
+        else:
+            return
     try:
-        async with Client(name=details[0].get('Nomor'), api_id=api_id, api_hash=api_hash, workdir=FolderSessions) as app:
+        async with Client(name=details.get('NamaFileSession'), api_id=api_id, api_hash=api_hash, workdir=FolderSessions) as app:
             me = await app.get_me()
             FullName = me.first_name if me.first_name else me.username
             print(f"[Akun {index}: {NamaAkun}] - [{FullName} | {me.phone_number}]")
@@ -102,33 +138,33 @@ async def send_message(NamaAkun, details, index):
                             message_text = text_file.read().strip()
 
                         try:
-                            if config['akun'][NamaAkun][0]['FileText'] and config['akun'][NamaAkun][0]['FileVideo']:
+                            if akun[NamaAkun]['FileText'] and akun[NamaAkun]['FileVideo']:
                                 await discussion_message.reply_video(video=JalurFileVideo, caption=message_text)
                                 NamaFileText = FileText.split('.')[0]
                                 NamaFileVideo = FileVideo.split('.')[0]
                                 print(f"[Akun {index}: {FullName}] - [{NoSaluran}] ✅ {NamaSaluran} | {NamaFileText} | {NamaFileVideo}")
                                 x += 1
                                 message_id -= 1
-                            elif config['akun'][NamaAkun][0]['FileText'] and config['akun'][NamaAkun][0]['FileGambar']:
+                            elif akun[NamaAkun]['FileText'] and akun[NamaAkun]['FileGambar']:
                                 await discussion_message.reply_photo(photo=JalurFileGambar, caption=message_text)
                                 NamaFileText = FileText.split('.')[0]
                                 NamaFileGambar = FileGambar.split('.')[0]
                                 print(f"[Akun {index}: {FullName}] - [{NoSaluran}] ✅ {NamaSaluran} | {NamaFileText} | {NamaFileGambar}")
                                 x += 1
                                 message_id -= 1
-                            elif config['akun'][NamaAkun][0]['FileText']:
+                            elif akun[NamaAkun]['FileText']:
                                 await discussion_message.reply(message_text)
                                 NamaFileText = FileText.split('.')[0]
                                 print(f"[Akun {index}: {FullName}] - [{NoSaluran}] ✅ {NamaSaluran} | {NamaFileText}")
                                 x += 1
                                 message_id -= 1
-                            elif config['akun'][NamaAkun][0]['FileVideo']:
+                            elif akun[NamaAkun]['FileVideo']:
                                 await discussion_message.reply_video(video=JalurFileVideo)
                                 NamaFileVideo = FileVideo.split('.')[0]
                                 print(f"[Akun {index}: {FullName}] - [{NoSaluran}] ✅ {NamaSaluran} | {NamaFileVideo}")
                                 x += 1
                                 message_id -= 1
-                            elif config['akun'][NamaAkun][0]['FileGambar']:
+                            elif akun[NamaAkun]['FileGambar']:
                                 await discussion_message.reply_photo(photo=JalurFileGambar)
                                 NamaFileGambar = FileGambar.split('.')[0]
                                 print(f"[Akun {index}: {FullName}] - [{NoSaluran}] ✅ {NamaSaluran} | {NamaFileGambar}")
@@ -148,10 +184,35 @@ async def send_message(NamaAkun, details, index):
         print(f"Kesalahan pada akun {NamaAkun}: {e}")
 
 async def main():
+
+    FolderSessions = os.path.join(os.path.dirname(__file__), 'sessions')
     
     config = baca("config.json")
     
-    akun = config.get("akun", {})
+    akun = baca_akun()
+    
+    for index, (NamaAkun, details) in enumerate(akun.items()):
+                
+        if akun[NamaAkun]['api_id'] and akun[NamaAkun]['api_hash']:
+            api_id = akun[NamaAkun]['api_id']
+            api_hash = akun[NamaAkun]['api_hash']
+        elif config['pengaturan'][0]['api_id'] and config['pengaturan'][0]['api_hash']:
+            api_id = config['pengaturan'][0]['api_id']
+            api_hash = config['pengaturan'][0]['api_hash']
+        else:
+            print(f"[Akun {index}: {NamaAkun}] - isi api_id dan api_hash di: \nakun.txt untuk akun {NamaAkun} \nconfig.json untuk semua akun")
+            return
+                
+        FileSession = akun[NamaAkun]['NamaFileSession']
+        JalurFileSession = os.path.join(FolderSessions, FileSession)
+    
+        if not os.path.exists(JalurFileSession):
+            if isinstance(details.get('NamaFileSession'), int) or (isinstance(details.get('NamaFileSession'), str) and details.get('NamaFileSession').isdigit()):
+                async with Client(name=details.get('NamaFileSession'), phone_number=details.get('NamaFileSession'), api_id=api_id, api_hash=api_hash, workdir=FolderSessions) as app:
+                    me = await app.get_me()
+            else:
+                continue
+        
     
     tasks = [
         send_message(NamaAkun, details, index + 1)
