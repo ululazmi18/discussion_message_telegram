@@ -2,6 +2,8 @@ import json
 import gc
 from pyrogram import Client
 
+os.makedirs("sessions", exist_ok=True)
+
 def baca_konfigurasi(nama_file):
     """
     Membaca konfigurasi dari file JSON.
