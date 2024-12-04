@@ -113,10 +113,18 @@ async def send_message(NamaAkun, details, index):
             pass
         else:
             return
+    else:
+        try:
+            async with Client(name=details.get('NamaFileSession'), api_id=api_id, api_hash=api_hash, workdir=FolderSessions) as app:
+                me = await app.get_me()
+        except Exception:
+            os.remove(os.path.join(FolderSessions, f"{details.get('NamaFileSession')}.session"))
+            return
+    
     try:
         async with Client(name=details.get('NamaFileSession'), api_id=api_id, api_hash=api_hash, workdir=FolderSessions) as app:
             me = await app.get_me()
-            FullName = me.first_name if me.first_name else me.username
+            FullName = f"{me.first_name} {me.last_name}" if me.last_name else me.first_name
             print(f"[Akun {index}: {NamaAkun}] - [{FullName} | {me.phone_number}]")
             NoSaluran = 1
             for NamaSaluran in target_channels:
