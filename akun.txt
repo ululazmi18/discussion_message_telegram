@@ -5,11 +5,5 @@
 # NamaAkun,NomorBaru,NamaFileSaluran,NamaFileTeks,NamaFileGambar,NamaFileVideo,JumlahPost,ApiId,ApiHash
 # Fatimah,628561024699,saluran.txt,teks.txt,media.png,media.mp4,2,123456789,1p2o3i4u5y6t7r8e9w
 
-Fatimah,628561024699,saluran.txt,teks.txt,media.png
 
-Serabi,628561630676,saluran.txt,teks.txt
-
-Dewi,628567305419,saluran.txt,teks.txt,media.png
-
-andria,Serabi,saluran.txt,teks.txt,media.png
 
