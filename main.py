@@ -217,6 +217,7 @@ async def main():
         if not os.path.exists(JalurFileSession):
             if isinstance(details.get('NamaFileSession'), int) or (isinstance(details.get('NamaFileSession'), str) and details.get('NamaFileSession').isdigit()):
                 async with Client(name=details.get('NamaFileSession'), phone_number=details.get('NamaFileSession'), api_id=api_id, api_hash=api_hash, workdir=FolderSessions) as app:
+                    print(f"Login untuk [{NamaAkun} - {FileSession}]")
                     me = await app.get_me()
             else:
                 continue
