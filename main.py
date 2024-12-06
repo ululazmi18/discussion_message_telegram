@@ -53,8 +53,10 @@ async def send_message(NamaAkun, details, index):
     akun = baca_akun()
     
     if not akun[NamaAkun]['FileChannel']:
+        print(f"[Akun {index}: {NamaAkun}] - belum menentukan file channel di akun.txt")
         return
     if not akun[NamaAkun]['FileText'] and not akun[NamaAkun]['FileGambar'] and not akun[NamaAkun]['FileVideo']:
+        print(f"[Akun {index}: {NamaAkun}] - miniml harus menentukan file text, gambar, atau video di akun.txt")
         return
     if akun[NamaAkun]['api_id'] and akun[NamaAkun]['api_hash']:
         api_id = akun[NamaAkun]['api_id']
@@ -67,8 +69,10 @@ async def send_message(NamaAkun, details, index):
         return
     if akun[NamaAkun]['JumlahPost']:
         JumlahPost = akun[NamaAkun]['JumlahPost']
-    else:
+    elif config['pengaturan'][0]['JumlahPost']:
         JumlahPost = config['pengaturan'][0]['JumlahPost']
+    else:
+        JumlahPost = 2
 
     FileSession = akun[NamaAkun]['NamaFileSession']
     FileChannel = akun[NamaAkun]['FileChannel']
@@ -112,6 +116,7 @@ async def send_message(NamaAkun, details, index):
         if isinstance(details.get('NamaFileSession'), int) or (isinstance(details.get('NamaFileSession'), str) and details.get('NamaFileSession').isdigit()):
             pass
         else:
+            print(f"[Akun {index}: {NamaAkun}] - File {FileSession}.session tidak ditemukan. jika belum memiliki file session, gunakan nomor yang ingin digunakan sebagai session baru")
             return
     else:
         try:
@@ -119,6 +124,7 @@ async def send_message(NamaAkun, details, index):
                 me = await app.get_me()
         except Exception:
             os.remove(os.path.join(FolderSessions, f"{details.get('NamaFileSession')}.session"))
+            print(f"[Akun {index}: {NamaAkun}] - File {FileSession}.session dihapus karena tidak dapat digunakan")
             return
     
     try:
@@ -198,6 +204,11 @@ async def main():
     config = baca("config.json")
     
     akun = baca_akun()
+    
+    if not akun:
+        print("Tidak ada akun yang terdaftar di akun.txt")
+        print("Baris yang diawali dengan tanda '#' akan diabaikan.")
+        exit()
     
     for index, (NamaAkun, details) in enumerate(akun.items()):
                 
