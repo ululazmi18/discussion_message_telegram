@@ -223,6 +223,7 @@ async def main():
         exit()
     
     for index, (NamaAkun, details) in enumerate(akun.items()):
+        index += 1
                 
         if akun[NamaAkun]['api_id'] and akun[NamaAkun]['api_hash']:
             api_id = akun[NamaAkun]['api_id']
@@ -231,7 +232,7 @@ async def main():
             api_id = config['pengaturan'][0]['api_id']
             api_hash = config['pengaturan'][0]['api_hash']
         else:
-            print(f"[Akun {index}: {NamaAkun}] - isi api_id dan api_hash di: \nakun.txt untuk akun {NamaAkun} \nconfig.json untuk semua akun")
+            print(f"[Akun {index}: {NamaAkun}] - isi api_id dan api_hash di: \n- akun.txt untuk akun {NamaAkun} \n- config.json untuk semua akun")
             return
                 
         FileSession = akun[NamaAkun]['NamaFileSession']
