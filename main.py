@@ -92,22 +92,33 @@ async def send_message(NamaAkun, details, index):
     JalurFileVideo = os.path.join(FolderMedia, FileVideo)
     
     if FileChannel != "":
+        JalurFileChannels = JalurFileChannels.split('.')[0]
+        file_paths = glob.glob(f"{JalurFileChannels}.*")
+        JalurFileChannels = file_paths[0]
         if not os.path.exists(JalurFileChannels):
             print(f"[Akun {index}: {NamaAkun}] - File {FileChannel} tidak ditemukan")
             return
     if FileText != "":
+        JalurFileText = JalurFileText.split('.')[0]
+        file_paths = glob.glob(f"{JalurFileText}.*")
+        JalurFileText = file_paths[0]
         if not os.path.exists(JalurFileText):
             print(f"[Akun {index}: {NamaAkun}] - File {FileText} tidak ditemukan")
             return
     if FileGambar != "":
+        JalurFileGambar = JalurFileGambar.split('.')[0]
+        file_paths = glob.glob(f"{JalurFileGambar}.*")
+        JalurFileGambar = file_paths[0]
         if not os.path.exists(JalurFileGambar):
             print(f"[Akun {index}: {NamaAkun}] - File {FileGambar} tidak ditemukan")
             return
     if FileVideo != "":
+        JalurFileVideo = JalurFileVideo.split('.')[0]
+        file_paths = glob.glob(f"{JalurFileVideo}.*")
+        JalurFileVideo = file_paths[0]
         if not os.path.exists(JalurFileVideo):
             print(f"[Akun {index}: {NamaAkun}] - File {FileVideo} tidak ditemukan")
             return
-    
     
     with open(JalurFileChannels, 'r') as file:
         target_channels = [line.strip().replace('https://t.me/', '') for line in file if line.strip()]
